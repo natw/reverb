@@ -23,7 +23,7 @@ def guess_separator(data)
   if data.scan(/[^\\], /).length == num_seps
     return ','
   end
-  if data.count(' | ') == num_seps
+  if data.scan(/ \| /).length == num_seps
     return '|'
   end
   if data.scan(/[^\\] /).length == num_seps
