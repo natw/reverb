@@ -17,6 +17,7 @@ def display(x)
 end
 
 # Based on a fairly naive huristic, guess what the separator for the given data is
+# for now, depends on the fact that we're looking at 5 fields per entry
 def guess_separator(data)
   # Dear code reviewer, start here!
   num_seps =  4 * data.split("\n").length
