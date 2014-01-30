@@ -34,4 +34,14 @@ describe 'guess_separator' do
       expect(guess_separator(data)).to eq ' '
     end
   end
+
+  context "a tricky csv" do
+    let (:data) {
+      'a | a, b | b, c | c, d | d, e'
+    }
+
+    it "should recognize a csv" do
+      expect(guess_separator(data)).to eq ','
+    end
+  end
 end
