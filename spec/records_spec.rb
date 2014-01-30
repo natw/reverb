@@ -7,7 +7,7 @@ describe 'guess_separator' do
 
   context "a reasonable csv" do
     let (:data) {
-      "asdf, qwerty, foo\, bar, baz"
+      'asdf, qwerty, foo\, bar, baz, qux'
     }
 
     it 'sees the commas' do
@@ -17,7 +17,7 @@ describe 'guess_separator' do
 
   context "a reasonable psv" do
     let (:data) {
-      "asdf | qwerty | foo \| bar | baz"
+      'asdf | qwerty | foo \| bar | baz | qux'
     }
 
     it "returns a pipe" do
@@ -27,7 +27,7 @@ describe 'guess_separator' do
 
   context "a reasonable space separated value file" do
     let (:data) {
-      "asdf qwerty foo\ bar baz"
+      'asdf qwerty foo\ bar baz qux'
     }
 
     it "returns a space" do
