@@ -1,14 +1,16 @@
 require 'csv'
 
 def main
-  data_filename = ARGV[0]
-  unless data_filename
+  filenames = ARGV
+  unless filenames.length > 0
     puts 'feed me a stray filename'
     exit
   end
-  data = File.new(data_filename).read
-  col_sep = guess_separator(data)
-  display(format_data(data, col_sep))
+  filenames.each { |filename|
+    data = File.new(filename).read
+    col_sep = guess_separator(data)
+    display(format_data(data, col_sep))
+  }
 end
 
 
