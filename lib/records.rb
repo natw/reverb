@@ -34,7 +34,7 @@ def guess_separator(data)
 end
 
 def format_data(data, col_sep)
-  CSV.parse(data, {col_sep: col_sep})
+  CSV.parse(data, {col_sep: col_sep, converters: lambda { |x| x ? x.strip : nil}})
 end
 
 if __FILE__ == $0
