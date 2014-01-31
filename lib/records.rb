@@ -1,21 +1,60 @@
 require 'csv'
+require 'date'
+require 'optparse'
+require 'ostruct'
+
 
 def main
+  options = getopts()
   filenames = ARGV
+
   unless filenames.length > 0
     puts 'feed me a stray filename'
     exit
   end
-  filenames.each { |filename|
-    data = File.new(filename).read
-    col_sep = guess_separator(data)
-    display(format_data(data, col_sep))
-  }
+
+  display(construct_records(parse_files(filenames)), options.output)
 end
 
 
-def display(x)
-  puts x.inspect
+def getopts
+  options = OpenStruct.new
+  OptionParser.new do |opts|
+    opts.banner = "Usage: #{__FILE__} [options] files"
+
+    opts.on("-o", "--output [style]", Integer, "Style of output") do |o|
+      options.output = o
+    end
+  end.parse!
+  options
+end
+
+def display(records, style)
+  puts records.inspect
+end
+
+def parse_files(filenames)
+  filenames.collect { |fname|
+    parse_file(fname)
+  }.reduce :concat
+end
+
+def parse_file(filename)
+  data = File.new(filename).read
+  col_sep = guess_separator(data)
+  CSV.parse(data, {col_sep: col_sep, converters: lambda { |x| x ? x.strip : nil}})
+end
+
+def construct_records(rows)
+  rows.map { |row|
+    {
+      first_name: row[0],
+      last_name: row[1],
+      sex: row[2],
+      favorite_color: row[3],
+      birthday: Date.parse(row[4]),
+    }
+  }
 end
 
 # Based on a fairly naive huristic, guess what the separator for the given data is
