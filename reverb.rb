@@ -1,5 +1,5 @@
 require './lib/record_reader'
 
 if __FILE__ == $0
-  RecordReader.run
+  RecordReader.run(ARGV)
 end

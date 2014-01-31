@@ -1,32 +1,30 @@
 require 'csv'
 require 'date'
 require 'optparse'
-require 'ostruct'
 
 
 module RecordReader
-  def self.run
-    options = getopts()
-    filenames = ARGV
+  def self.run(args)
+    options = getopts(args)
+    filenames = args
 
     unless filenames.length > 0
-      puts 'feed me a stray filename'
-      exit
+      abort('feed me a stray filename')
     end
 
-    display(sort(construct_records(parse_files(filenames)), options.output))
+    display(sort(construct_records(parse_files(filenames)), options[:output]))
   end
 
 
-  def self.getopts
-    options = OpenStruct.new
+  def self.getopts(args)
+    options = {}
     OptionParser.new do |opts|
       opts.banner = "Usage: #{__FILE__} [options] files"
 
       opts.on("-o", "--output [style]", Integer, "Style of output") do |o|
-        options.output = o
+        options[:output] = o
       end
-    end.parse!
+    end.parse!(args)
     options
   end
 
@@ -38,6 +36,8 @@ module RecordReader
       ->(rs){ rs.sort_by { |r| r[:birthday] } }
     when 3
       ->(rs){ rs.sort_by { |r| r[:last_name] }.reverse }
+    else
+      abort("unrecognized output style: #{style}")
     end.call(records)
   end
 
