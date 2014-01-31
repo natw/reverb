@@ -13,7 +13,7 @@ def main
     exit
   end
 
-  display(construct_records(parse_files(filenames)), options.output)
+  display(sort(construct_records(parse_files(filenames)), options.output))
 end
 
 
@@ -29,8 +29,22 @@ def getopts
   options
 end
 
-def display(records, style)
-  puts records.inspect
+def sort(records, style)
+  sorter = case style
+  when 1
+    ->(r){ [r[:sex], r[:last_name]] }
+  when 2
+    ->(r){ r[:birthday] }
+  when 3
+    ->(r){ r[:last_name] }
+  end
+  records.sort_by(&sorter)
+end
+
+def display(records)
+  records.each { |r|
+    puts "#{r[:last_name]}, #{r[:first_name]}, #{r[:sex]}, #{r[:birthday].strftime('%m/%d/%Y')}, #{r[:favorite_color]}"
+  }
 end
 
 def parse_files(filenames)
@@ -48,8 +62,8 @@ end
 def construct_records(rows)
   rows.map { |row|
     {
-      first_name: row[0],
-      last_name: row[1],
+      last_name: row[0],
+      first_name: row[1],
       sex: row[2],
       favorite_color: row[3],
       birthday: Date.parse(row[4]),
@@ -72,10 +86,6 @@ def guess_separator(data)
     return ' '
   end
   raise "I can't tell what kind of file this is."
-end
-
-def format_data(data, col_sep)
-  CSV.parse(data, {col_sep: col_sep, converters: lambda { |x| x ? x.strip : nil}})
 end
 
 if __FILE__ == $0
