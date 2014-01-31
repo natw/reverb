@@ -4,7 +4,7 @@ SimpleCov.start
 require 'rubygems'
 require 'bundler/setup'
 
-require 'records'
+require './lib/record_reader'
 
 
 RSpec.configure do |config|
