@@ -34,9 +34,9 @@ def display(records, style)
 end
 
 def parse_files(filenames)
-  filenames.collect { |fname|
+  filenames.collect_concat { |fname|
     parse_file(fname)
-  }.reduce :concat
+  }
 end
 
 def parse_file(filename)
