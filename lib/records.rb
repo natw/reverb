@@ -30,15 +30,14 @@ def getopts
 end
 
 def sort(records, style)
-  sorter = case style
+  case style
   when 1
-    ->(r){ [r[:sex], r[:last_name]] }
+    ->(rs){ rs.sort_by { |r| [r[:sex], r[:last_name]] } }
   when 2
-    ->(r){ r[:birthday] }
+    ->(rs){ rs.sort_by { |r| r[:birthday] } }
   when 3
-    ->(r){ r[:last_name] }
-  end
-  records.sort_by(&sorter)
+    ->(rs){ rs.sort_by { |r| r[:last_name] }.reverse }
+  end.call(records)
 end
 
 def display(records)
