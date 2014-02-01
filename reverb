@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-require './lib/record_reader'
+require './lib/reverb'
 
 if __FILE__ == $0
-  RecordReader.run(ARGV)
+  Reverb::RecordReader.run(ARGV)
 end

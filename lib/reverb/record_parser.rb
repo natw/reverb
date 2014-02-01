@@ -2,38 +2,36 @@ require 'csv'
 
 module Reverb
   class RecordParser
-    def initialize(raw_record)
-      @raw_record = raw_record
-      puts 'OK'
-      puts raw_record
+    def initialize(raw_records)
+      @raw_records = raw_records
     end
 
     def parse
-      CSV.parse(@raw_record, {col_sep: separator,
-                              converters: lambda { |x| x ? x.strip : nil }})[0]
+      CSV.parse(@raw_records, {col_sep: separator,
+                              converters: lambda { |x| x ? x.strip : nil }})
     end
 
-    def to_h
-      parsed = parse
-      puts parsed.inspect
-      {
-        last_name: parsed[0],
-        first_name: parsed[1],
-        sex: parsed[2],
-        favorite_color: parsed[3],
-        birthday: Date.parse(parsed[4]),
+    def hashes
+      parse.collect { |r|
+        {
+          last_name: r[0],
+          first_name: r[1],
+          sex: r[2],
+          favorite_color: r[3],
+          birthday: Date.parse(r[4]),
+        }
       }
     end
 
     def separator
-      num_seps =  4
-      if @raw_record.scan(/[^\\], /).length == num_seps
+      num_seps =  4 * @raw_records.split("\n").length
+      if @raw_records.scan(/[^\\], /).length == num_seps
         return ','
       end
-      if @raw_record.scan(/ \| /).length == num_seps
+      if @raw_records.scan(/ \| /).length == num_seps
         return '|'
       end
-      if @raw_record.scan(/[^\\] /).length == num_seps
+      if @raw_records.scan(/[^\\] /).length == num_seps
         return ' '
       end
       raise "I cannot determine what the field separator is."
