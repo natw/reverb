@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe RecordReader do
+describe Reverb::RecordReader do
   describe '.run' do
     it "exits if you don't supply any filenames" do
-      expect{ RecordReader.run([]) }.to raise_error(SystemExit)
+      expect{ subject.run([]) }.to raise_error(SystemExit)
     end
 
     it "reads some records" do
-      RecordReader.stub(:parse_files).with(['foo', 'bar']).and_return([['a', 'b', 'c', 'd', '1/2/3']])
-      RecordReader.stub(:display) { |x| x }
-      RecordReader.run(['foo', 'bar', '-o', '1'])
+      subject.stub(:parse_files).with(['foo', 'bar']).and_return([['a', 'b', 'c', 'd', '1/2/3']])
+      subject.stub(:display) { |x| x }
+      subject.run(['foo', 'bar', '-o', '1'])
     end
   end
 
@@ -94,12 +94,10 @@ describe RecordReader do
   end
 
   describe '.parse_file' do
-    let (:csv_data) { "foo, bar\nbaz,  qux " }
-
     it 'parses a file' do
-      expect(File).to receive(:new).with('filename') { double(read: csv_data) }
-      expect(subject).to receive(:guess_separator) { ',' }
-      expect(subject.parse_file('filename')).to eq([['foo', 'bar'], ['baz', 'qux']])
+      expect(File).to receive(:new).with('filename') { double(read: 'asdf') }
+      expect(Reverb::RecordParser).to receive(:new).with('asdf') { double(hashes: 'parsed') }
+      expect(subject.parse_file('filename')).to eq('parsed')
     end
   end
 
@@ -117,14 +115,14 @@ describe RecordReader do
 
   describe '.guess_separator' do
     it "can error out" do
-      expect{ RecordReader.guess_separator('hey there') }.to raise_error
+      expect{ subject.guess_separator('hey there') }.to raise_error(SystemExit)
     end
 
     context "a reasonable csv" do
       let (:data) { 'asdf, qwerty, foo\, bar, baz, qux' }
 
       it 'sees the commas' do
-        expect(RecordReader.guess_separator(data)).to eq ','
+        expect(subject.guess_separator(data)).to eq ','
       end
     end
 
@@ -132,7 +130,7 @@ describe RecordReader do
       let (:data) { 'asdf | qwerty | foo \| bar | baz | qux' }
 
       it "returns a pipe" do
-        expect(RecordReader.guess_separator(data)).to eq '|'
+        expect(subject.guess_separator(data)).to eq '|'
       end
     end
 
@@ -140,7 +138,7 @@ describe RecordReader do
       let (:data) { 'asdf qwerty foo\ bar baz qux' }
 
       it "returns a space" do
-        expect(RecordReader.guess_separator(data)).to eq ' '
+        expect(subject.guess_separator(data)).to eq ' '
       end
     end
 
@@ -148,7 +146,7 @@ describe RecordReader do
       let (:data) { 'a | a, b | b, c | c, d | d, e' }
 
       it "should recognize a csv" do
-        expect(RecordReader.guess_separator(data)).to eq ','
+        expect(subject.guess_separator(data)).to eq ','
       end
     end
   end

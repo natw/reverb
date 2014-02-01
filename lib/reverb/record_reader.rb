@@ -4,7 +4,7 @@ require 'optparse'
 
 
 module Reverb
-  class RecordReader
+  module RecordReader
     def self.run(args)
       options = getopts(args)
       filenames = args
