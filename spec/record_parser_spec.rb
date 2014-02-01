@@ -1,6 +1,19 @@
 require 'spec_helper'
 
 describe Reverb::RecordParser do
+  describe '#parse' do
+    subject do
+      Reverb::RecordParser.new(data)
+    end
+
+    let (:data) { "foo, bar, baz" }
+
+    it 'parses the records as a csv' do
+      expect(subject).to receive(:separator) { ',' }
+      expect(subject.parse).to eq([['foo', 'bar', 'baz']])
+    end
+  end
+
   describe '#hashes' do
     let (:rows) {
       [['Parker', 'Peter', 'M', 'red', "2000/1/2/"]]

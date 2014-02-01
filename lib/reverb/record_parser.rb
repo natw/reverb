@@ -8,7 +8,7 @@ module Reverb
 
     def parse
       CSV.parse(@raw_records, {col_sep: separator,
-                              converters: lambda { |x| x ? x.strip : nil }})
+                               converters: lambda { |x| x ? x.strip : nil }})
     end
 
     def hashes
