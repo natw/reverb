@@ -61,6 +61,12 @@ describe RecordReader do
         )
       end
     end
+
+    context 'something else' do
+      it 'aborts' do
+        expect{subject.sort(records, 4)}.to raise_error(SystemExit)
+      end
+    end
   end
 
   describe '.display' do
@@ -84,6 +90,28 @@ describe RecordReader do
       expect(subject).to receive(:parse_file).with('a').ordered { [1,2,3] }
       expect(subject).to receive(:parse_file).with('b').ordered { [4,5,6] }
       expect(subject.parse_files(['a', 'b'])).to eq [1, 2, 3, 4, 5, 6]
+    end
+  end
+
+  describe '.parse_file' do
+    let (:csv_data) { "foo, bar\nbaz,  qux " }
+
+    it 'parses a file' do
+      expect(File).to receive(:new).with('filename') { double(read: csv_data) }
+      expect(subject).to receive(:guess_separator) { ',' }
+      expect(subject.parse_file('filename')).to eq([['foo', 'bar'], ['baz', 'qux']])
+    end
+  end
+
+  describe '.construct_records' do
+    let (:rows) {
+      [['Parker', 'Peter', 'M', 'red', "2000/1/2/"]]
+    }
+    it 'makes a hash out of the row arrays' do
+      expect(subject.construct_records(rows)).to eq(
+        [{last_name: 'Parker', first_name: 'Peter', sex: 'M',
+          favorite_color: 'red', birthday: Date.new(2000, 1, 2)}]
+      )
     end
   end
 
