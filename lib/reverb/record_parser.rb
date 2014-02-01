@@ -1,24 +1,21 @@
-require 'json'
-
-REDIS_LIST_KEY = 'reverb_records'
+require 'csv'
 
 module Reverb
-  class Record
+  class RecordParser
     def initialize(raw_record)
       @raw_record = raw_record
-    end
-
-    def save
-      puts 'ok'
+      puts 'OK'
+      puts raw_record
     end
 
     def parse
       CSV.parse(@raw_record, {col_sep: separator,
-                              converters: lambda { |x| x ? x.strip : nil }})
+                              converters: lambda { |x| x ? x.strip : nil }})[0]
     end
 
     def to_h
       parsed = parse
+      puts parsed.inspect
       {
         last_name: parsed[0],
         first_name: parsed[1],
@@ -26,10 +23,6 @@ module Reverb
         favorite_color: parsed[3],
         birthday: Date.parse(parsed[4]),
       }
-    end
-
-    def to_json
-      JSON.dump(to_h)
     end
 
     def separator

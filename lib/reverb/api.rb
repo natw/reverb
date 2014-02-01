@@ -10,13 +10,13 @@ module Reverb
         requires :record, type: String, desc: "the record, comma/space/pipe separated"
       end
       post do
-        Record.new(params[:record]).save
+        RecordStore.save(RecordParser.new(params[:record]))
         'thanks'
       end
 
       desc "get records sorted by gender"
       get :gender do
-        'gender'
+        RecordStore.all
       end
 
       desc "get records sorted by birthdate"
