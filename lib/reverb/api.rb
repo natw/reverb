@@ -1,15 +1,17 @@
 require 'grape'
 
 module Reverb
-  class API < ::Grape::API
+  class API < Grape::API
+    format :txt
+
     resource :records do
       desc "create a record"
       params do
         requires :record, type: String, desc: "the record, comma/space/pipe separated"
       end
       post do
-        puts params[:record]
-        'yup'
+        Record.new(params[:record]).save
+        'thanks'
       end
 
       desc "get records sorted by gender"
