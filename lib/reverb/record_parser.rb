@@ -34,7 +34,7 @@ module Reverb
       if @raw_records.scan(/[^\\] /).length == num_seps
         return ' '
       end
-      raise "I cannot determine what the field separator is."
+      raise RuntimeError.new("I cannot determine what the field separator is.")
     end
   end
 end

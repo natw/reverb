@@ -2,12 +2,21 @@ require 'spec_helper'
 
 describe Reverb::RecordReader do
   describe '.run' do
+    let (:records) {
+      [
+        {last_name: 'a', birthday: Date.new(4,5,6), sex: 'M'},
+        {last_name: 'o', birthday: Date.new(5,6,7), sex: 'M'},
+        {last_name: 'l', birthday: Date.new(3,4,5), sex: 'F'},
+        {last_name: 'x', birthday: Date.new(7,8,9), sex: 'F'},
+      ]
+    }
+
     it "exits if you don't supply any filenames" do
       expect{ subject.run([]) }.to raise_error(SystemExit)
     end
 
     it "reads some records" do
-      subject.stub(:parse_files).with(['foo', 'bar']).and_return([['a', 'b', 'c', 'd', '1/2/3']])
+      subject.stub(:parse_files).with(['foo', 'bar']).and_return(records)
       subject.stub(:display) { |x| x }
       subject.run(['foo', 'bar', '-o', '1'])
     end
@@ -98,56 +107,6 @@ describe Reverb::RecordReader do
       expect(File).to receive(:new).with('filename') { double(read: 'asdf') }
       expect(Reverb::RecordParser).to receive(:new).with('asdf') { double(hashes: 'parsed') }
       expect(subject.parse_file('filename')).to eq('parsed')
-    end
-  end
-
-  describe '.construct_records' do
-    let (:rows) {
-      [['Parker', 'Peter', 'M', 'red', "2000/1/2/"]]
-    }
-    it 'makes a hash out of the row arrays' do
-      expect(subject.construct_records(rows)).to eq(
-        [{last_name: 'Parker', first_name: 'Peter', sex: 'M',
-          favorite_color: 'red', birthday: Date.new(2000, 1, 2)}]
-      )
-    end
-  end
-
-  describe '.guess_separator' do
-    it "can error out" do
-      expect{ subject.guess_separator('hey there') }.to raise_error(SystemExit)
-    end
-
-    context "a reasonable csv" do
-      let (:data) { 'asdf, qwerty, foo\, bar, baz, qux' }
-
-      it 'sees the commas' do
-        expect(subject.guess_separator(data)).to eq ','
-      end
-    end
-
-    context "a reasonable psv" do
-      let (:data) { 'asdf | qwerty | foo \| bar | baz | qux' }
-
-      it "returns a pipe" do
-        expect(subject.guess_separator(data)).to eq '|'
-      end
-    end
-
-    context "a reasonable space separated value file" do
-      let (:data) { 'asdf qwerty foo\ bar baz qux' }
-
-      it "returns a space" do
-        expect(subject.guess_separator(data)).to eq ' '
-      end
-    end
-
-    context "a tricky csv" do
-      let (:data) { 'a | a, b | b, c | c, d | d, e' }
-
-      it "should recognize a csv" do
-        expect(subject.guess_separator(data)).to eq ','
-      end
     end
   end
 end
