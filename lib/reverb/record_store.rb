@@ -12,9 +12,9 @@ module Reverb
     end
 
     def self.save(records)
-      self.redis.pipelined do
+      redis.pipelined do
         records.each do |r|
-          self.redis.rpush(REDIS_LIST_KEY, self.serialize(r))
+          redis.rpush(REDIS_LIST_KEY, serialize(r))
         end
       end
     end
