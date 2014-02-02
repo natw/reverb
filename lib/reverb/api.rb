@@ -2,7 +2,7 @@ require 'grape'
 
 module Reverb
   class API < Grape::API
-    format :txt
+    format :json
 
     resource :records do
       desc "create a record"
