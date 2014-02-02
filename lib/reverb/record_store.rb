@@ -7,18 +7,20 @@ module Reverb
   class RecordStore
     REDIS_LIST_KEY = 'reverb.records'
 
-    @@redis = Redis.new
+    def self.redis
+      @@redis ||= Redis.new
+    end
 
     def self.save(records)
-      @@redis.pipelined do
+      self.redis.pipelined do
         records.each do |r|
-          @@redis.rpush(REDIS_LIST_KEY, self.serialize(r))
+          self.redis.rpush(REDIS_LIST_KEY, self.serialize(r))
         end
       end
     end
 
     def self.all
-      @@redis.lrange(REDIS_LIST_KEY, 0, -1).map &method(:deserialize)
+      redis.lrange(REDIS_LIST_KEY, 0, -1).map &method(:deserialize)
     end
 
     def self.serialize(r)
