@@ -20,9 +20,9 @@ module Reverb
     def self.getopts(args)
       options = {}
       OptionParser.new do |opts|
-        opts.banner = "Usage: #{__FILE__} [options] files"
+        opts.banner = "Usage: ./reverb --output [1..3] files"
 
-        opts.on("-o", "--output [style]", Integer, "Style of output") do |o|
+        opts.on("-o", "--output [style]", Integer, "Style of output (options 1 to 3)") do |o|
           options[:output] = o
         end
       end.parse!(args)
