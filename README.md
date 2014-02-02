@@ -8,6 +8,7 @@ Developed using Ruby 2.0. No promises otherwise.
 The command-line version is `./reverb`.
 Run `./reverb --help` to see the options.
 The usual usage is `./reverb -o [1..3] <files>` where `-o` corresponds to the three sorts in the spec.
+Some example data files are provided in the `data` directory.
 
 The web version is a standard rack app, so just run `unicorn` to get started.
 It requires a redis server running on localhost:6379 (the default).
